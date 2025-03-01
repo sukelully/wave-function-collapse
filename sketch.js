@@ -1,15 +1,16 @@
-const tiles = [];
-
+// Grid and tile variables
 let grid = [];
+const tiles = [];
+const DIM = 4;
 
-const DIM = 10;
-
+// Different tile types
 const BLANK = 0;
 const UP = 1;
 const RIGHT = 2;
 const DOWN = 3;
 const LEFT = 4;
 
+// Rules for tile placement
 const rules = [
     [
         [BLANK, UP],
@@ -43,6 +44,7 @@ const rules = [
     ],
 ]
 
+// Loads image for each tile type before program starts
 function preload() {
     tiles[0] = loadImage("tiles/blank.png");
     tiles[1] = loadImage("tiles/up.png");
@@ -51,6 +53,7 @@ function preload() {
     tiles[4] = loadImage("tiles/left.png");
 }
 
+// Initialise each element in the grid with cell objects containing all tile options
 function setup() {
     createCanvas(400, 400);
 
@@ -59,9 +62,11 @@ function setup() {
             collapsed: false,
             options: [BLANK, UP, RIGHT, DOWN, LEFT]
         };
+        console.log(grid[i]);
     }
 }
 
+// Removes invalid tile choices from cell.options array
 function checkValid(arr, valid) {
     for (let i = arr.length - 1; i >= 0; i--) {
 
@@ -69,23 +74,24 @@ function checkValid(arr, valid) {
         if (!valid.includes(element)) {
             arr.splice(i, 1);
         }
-
-        // console.log(arr);
-        // console.log("-----");
     }
 }
 
+// Draws new tile manually with mouse click
 function mousePressed() {
     redraw();
 }
 
+// Main drawing logic
 function draw() {
+    // Clear screen
     background(0);
 
+    // Draw grid cells
     const w = width / DIM;
     const h = height / DIM;
 
-    // Draw grid cells
+    // Loop through grid and render an image if collapsed or a placeholder square
     for (let j = 0; j < DIM; j++) {
         for (let i = 0; i < DIM; i++) {
             let cell = grid[i + j * DIM];
@@ -101,21 +107,20 @@ function draw() {
         }
     }
 
-    // Pick cell with least entropy
+    // Remove collapsed cells from grid and create copy
     let gridCopy = grid.slice();
     gridCopy = gridCopy.filter((a) => !a.collapsed);
-
-    // console.log("gridCopy");
-    // console.table(gridCopy);
 
     if (gridCopy.length === 0) {
         return;
     }
 
+    // Sort by least entropy (amount of tile choices left available)
     gridCopy.sort((a, b) => {
         return a.options.length - b.options.length;
     });
 
+    // Find cells with same minimum entropy and remove others
     let len = gridCopy[0].options.length;
     let stopIndex = 0;
 
@@ -127,16 +132,18 @@ function draw() {
     }
     if (stopIndex > 0) gridCopy.splice(stopIndex);
 
+    // Choose randomly out of remaining grid cells (all have the same entropy level)
     const cell = random(gridCopy);
-    cell.collapsed = true;
+    // Choose randomly out of remaining available tiles and collapse the wave function
     const pick = random(cell.options);
+    cell.collapsed = true;
     if (pick === undefined) {
         // startOver();
         return;
     }
     cell.options = [pick];
 
-    // Update grid with new options
+    // Update neighbour cells with new tile options (lowering entropy)
     const nextGrid = [];
     for (let j = 0; j < DIM; j++) {
         for (let i = 0; i < DIM; i++) {

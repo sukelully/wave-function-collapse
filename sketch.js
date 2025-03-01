@@ -192,7 +192,7 @@ function draw() {
                     }
                     checkValid(options, validOptions);
                 }
-
+                
                 nextGrid[index] = {
                     options,
                     collapsed: false,

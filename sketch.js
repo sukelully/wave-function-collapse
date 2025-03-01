@@ -29,6 +29,7 @@ function setup() {
     }
 
     grid[2].options = [BLANK, UP]
+    grid[0].options = [BLANK, UP]
 }
 
 function draw() {
@@ -39,6 +40,19 @@ function draw() {
     gridCopy.sort((a, b) => {
         return a.options.length - b.options.length;
     });
+
+    let len = gridCopy[0].options.length;
+    let stopIndex = 0;
+
+    for(let i = 1; i < gridCopy.length; i++) {
+        if (gridCopy[i].options.length > len) {
+            stopIndex = i;
+            break;
+        }
+    }
+
+    gridCopy.splice(stopIndex, gridCopy.length - stopIndex); 
+
     console.log(grid);
     console.log(gridCopy);
     

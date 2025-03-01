@@ -15,7 +15,7 @@ const rules = [
         [BLANK, UP],
         [BLANK, RIGHT],
         [BLANK, DOWN],
-        [BLANK, DOWN],
+        [BLANK, LEFT],
     ],
     [
         [RIGHT, DOWN, LEFT],
@@ -65,13 +65,13 @@ function setup() {
 function checkValid(arr, valid) {
     for (let i = arr.length - 1; i >= 0; i--) {
 
-        // VALID: [BLANK, RIGHT]
-        // ARR: [BLANK, UP, RIGHT, DOWN, LEFT]
-        // ISVALID: [BLANK, RIGHT]
         let element = arr[i];
         if (!valid.includes(element)) {
             arr.splice(i, 1);
         }
+
+        // console.log(arr);
+        // console.log("-----");
     }
 }
 
@@ -105,6 +105,8 @@ function draw() {
     let gridCopy = grid.slice();
     gridCopy = gridCopy.filter((a) => !a.collapsed);
 
+    // console.log("gridCopy");
+    // console.table(gridCopy);
 
     if (gridCopy.length === 0) {
         return;
@@ -133,11 +135,6 @@ function draw() {
         return;
     }
     cell.options = [pick];
-
-    console.log("grid");
-    console.table(grid);
-    console.log("gridCopy");
-    console.table(gridCopy);
 
     // Update grid with new options
     const nextGrid = [];
@@ -199,5 +196,5 @@ function draw() {
 
     grid = nextGrid;
 
-    noLoop();
+    // noLoop();
 }
